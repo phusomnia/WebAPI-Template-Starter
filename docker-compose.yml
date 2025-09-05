@@ -1,0 +1,6 @@
+﻿services:
+  webapi-template-starter:
+    image: webapi-template-starter
+    build:
+      context: .
+      dockerfile: Dockerfile
