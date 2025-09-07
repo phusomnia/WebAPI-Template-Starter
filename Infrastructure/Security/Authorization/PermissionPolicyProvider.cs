@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using WebAPI_Template_Starter.Infrastructure.Annotation;
+using WebAPI_Template_Starter.Infrastructure.Utils;
 
-namespace WebAPI_Template_Starter.Infrastructure.Security.permission;
+namespace WebAPI_Template_Starter.Infrastructure.Security.Authorization;
 
 [Component]
 public class PermissionPolicyProvider : IAuthorizationPolicyProvider

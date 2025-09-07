@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using WebAPI_Template_Starter.Domain.Entities;
 using WebAPI_Template_Starter.Features.AccountAPI;
-using WebAPI_Template_Starter.Infrastructure.Annotation;
 using WebAPI_Template_Starter.Infrastructure.Security;
 using WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 using WebAPI_Template_Starter.Infrastructure.Utils;

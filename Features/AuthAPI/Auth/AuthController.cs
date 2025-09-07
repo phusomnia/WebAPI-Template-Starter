@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Features.AccountAPI;
 using WebAPI_Template_Starter.Infrastructure.Security;
+using WebAPI_Template_Starter.Infrastructure.Security.Authorization;
 
 namespace WebAPI_Template_Starter.Features.AuthAPI.Auth;
 

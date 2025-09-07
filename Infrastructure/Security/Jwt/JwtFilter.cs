@@ -2,7 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using WebAPI_Template_Starter.Domain.Core.BaseModel;
-using WebAPI_Template_Starter.Infrastructure.Annotation;
+using WebAPI_Template_Starter.Infrastructure.Utils;
 
 namespace WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 

@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace WebAPI_Template_Starter.Infrastructure.Annotation;
+namespace WebAPI_Template_Starter.Infrastructure.Utils;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class ServiceAttribute : Attribute { }
