@@ -35,6 +35,7 @@
 
     <ItemGroup>
       <Folder Include="Domain\Entities\" />
+      <Folder Include="Features\RealTimeAPI\Chat\" />
     </ItemGroup>
 
 </Project>

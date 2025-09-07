@@ -20,12 +20,24 @@ public class MangaController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> getMangaAPI()
     {
-        var result = await _service.getManga();
-        var response = new APIResponse<Object>();
-        response.status = HttpStatusCode.OK.ToString();
-        response.data = result;
-        response.message = "Get manga";
-        return Ok(response);
+        try
+        {
+            var result = await _service.getManga();
+            var response = new APIResponse<Object>(
+                status: HttpStatusCode.OK.ToString(),
+                message: "Get manga",
+                data: result
+            );
+            
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return Problem(
+                detail: e.Message,
+                statusCode: 500
+            );
+        }
     }
     
     [HttpPost]
@@ -33,8 +45,24 @@ public class MangaController : ControllerBase
         [FromBody] MangaDTO dto    
     )
     {
-        var res = await _service.uploadManga(dto);
-        return Ok(res);
+        try
+        {
+            var result = await _service.uploadManga(dto);
+            var response = new APIResponse<Object>(
+                status: HttpStatusCode.OK.ToString(),
+                message: "Get manga",
+                data: result
+            );
+            
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return Problem(
+                detail: e.Message,
+                statusCode: 500
+            );
+        }
     }
     
     [HttpPut("{id}")]
@@ -42,17 +70,50 @@ public class MangaController : ControllerBase
         [FromBody] MangaDTO dto
     )
     {
-        var id = RouteData.Values["id"]?.ToString();
-        Console.WriteLine(id);
-        var res = await _service.editManga(id, dto);
-        return Ok("Manga updated");
+        try
+        {
+            var id = RouteData.Values["id"]?.ToString();
+            var result = await _service.editManga(id, dto);
+            var response = new APIResponse<Object>(
+                status: HttpStatusCode.OK.ToString(),
+                message: "Get manga",
+                data: result
+            );
+            
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return Problem(
+                detail: e.Message,
+                statusCode: 500
+            );
+        }
+        
     }
     
     [HttpDelete("{id}")]
     public async Task<ActionResult> deleteMangaAPI()
     {
-        var id = RouteData.Values["id"]?.ToString();
-        var result = await _service.deleteManga(id);
-        return Ok();
+        try
+        {
+            var id = RouteData.Values["id"]?.ToString();
+            var result = await _service.deleteManga(id);
+            var response = new APIResponse<Object>(
+                status: HttpStatusCode.OK.ToString(),
+                message: "Get manga",
+                data: result
+            );
+            
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return Problem(
+                detail: e.Message,
+                statusCode: 500
+            );
+        }
+        
     }
 }

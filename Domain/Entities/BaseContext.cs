@@ -42,9 +42,9 @@ public partial class BaseContext : DbContext
             entity.Property(e => e.Id)
                 .HasMaxLength(36)
                 .HasColumnName("id");
-            entity.Property(e => e.PasswordHash)
+            entity.Property(e => e.Password)
                 .HasMaxLength(255)
-                .HasColumnName("passwordHash")
+                .HasColumnName("password")
                 .UseCollation("utf8mb3_general_ci")
                 .HasCharSet("utf8mb3");
             entity.Property(e => e.RoleId)

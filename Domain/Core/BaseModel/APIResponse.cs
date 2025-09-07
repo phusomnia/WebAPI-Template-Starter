@@ -11,6 +11,10 @@ public class APIResponse<T> : BaseResponse
     
     public APIResponse(){}
     
+    public APIResponse(String status,String message) : base(status, message)
+    {
+    }
+    
     public APIResponse(String status,String message,T data, Dictionary<String, Object> metata = null) : base(status, message)
     {
         this.data = data;
