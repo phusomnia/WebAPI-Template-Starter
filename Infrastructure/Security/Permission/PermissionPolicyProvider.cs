@@ -10,7 +10,9 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     private const string POLICY_PREFIX = "Permission:";
     private readonly DefaultAuthorizationPolicyProvider _fallbackProvider;
     
-    public PermissionPolicyProvider(IOptions<AuthorizationOptions> options)
+    public PermissionPolicyProvider(
+        IOptions<AuthorizationOptions> options
+        )
     {
         _fallbackProvider = new DefaultAuthorizationPolicyProvider(options);
     }
@@ -20,9 +22,10 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
         if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase))
         {
             string permission = policyName.Substring(POLICY_PREFIX.Length);
-            var policy = new AuthorizationPolicyBuilder();
-            policy.AddRequirements(new PermissionRequirement(permission));
-            return Task.FromResult(policy.Build());
+            var policy = new AuthorizationPolicyBuilder()
+                            .AddRequirements(new PermissionRequirement(permission));
+            
+            return Task.FromResult<AuthorizationPolicy?>(policy.Build());
         }
 
         return _fallbackProvider.GetPolicyAsync(policyName);

@@ -1,5 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 using WebAPI_Template_Starter.Infrastructure.Security.permission;
@@ -12,13 +14,9 @@ public class SecurityConfig
     {
         builder.Services.AddHttpContextAccessor();
         
-        //
-        // builder.Services.AddScoped<JwtFilter>();
-        // builder.Services.AddControllers(options =>
-        // {
-        //     // Apply filter globally (all controllers/actions)
-        //     options.Filters.AddService<JwtFilter>();
-        // });
+        // -- Config permission --
+        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        builder.Services.AddSingleton<IAuthorizationHandler, PermissionRequirementHandler>();
         
         // -- Config openapi security schema -- 
         builder.Services.AddOpenApi(options =>
@@ -46,5 +44,7 @@ public class SecurityConfig
                 ClockSkew = TimeSpan.Zero
             };
         });
+
+        builder.Services.AddAuthorization();
     }
 }

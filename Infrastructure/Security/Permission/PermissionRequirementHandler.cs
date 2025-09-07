@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using WebAPI_Template_Starter.Infrastructure.Annotation;
+using WebAPI_Template_Starter.Infrastructure.Utils;
 
 namespace WebAPI_Template_Starter.Infrastructure.Security.permission;
 
@@ -8,6 +9,7 @@ public class PermissionRequirementHandler : AuthorizationHandler<PermissionRequi
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
+        Console.WriteLine(CustomJson.json(requirement.permission, CustomJsonOptions.WriteIndented));
         if (context.User.HasClaim("permission", requirement.permission))
         {
             context.Succeed(requirement);

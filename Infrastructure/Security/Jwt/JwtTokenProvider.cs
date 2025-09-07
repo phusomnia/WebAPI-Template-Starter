@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using WebAPI_Template_Starter.Features.AccountAPI;
 using WebAPI_Template_Starter.Infrastructure.Annotation;
 using WebAPI_Template_Starter.Infrastructure.Utils;
@@ -41,6 +42,7 @@ public class JwtTokenProvider
         Console.WriteLine($"GenToken: {CustomJson.json(dictUser, CustomJsonOptions.WriteIndented)}");
 
         var permissions = (await _accountRepo.findAccountDetail(dictUser["username"].ToString())).Select(x => x["permissionList"]);
+        var jsonPermission = JsonConvert.DeserializeObject<List<String>>(permissions.FirstOrDefault().ToString());
         
         var claims = new List<Claim>
         {
@@ -48,9 +50,8 @@ public class JwtTokenProvider
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("role", dictUser["roleName"].ToString())
         };
-        
-        foreach (var permission in permissions) {
-            claims.Add(new Claim("permission", permission.ToString()));
+        foreach (var permission in jsonPermission) {
+            claims.Add(new Claim("permission", permission));
         }
         
         string secretKey = _key;
