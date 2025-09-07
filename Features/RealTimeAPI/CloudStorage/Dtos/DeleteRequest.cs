@@ -4,7 +4,7 @@ namespace WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Dtos;
 
 public class DeleteRequest
 {
-    public CloudProvider provider { get; set; }
+    public CloudProvider cloudProvider { get; set; }
     public string objectId { get; set; }
 
     public DeleteRequest()
@@ -12,11 +12,11 @@ public class DeleteRequest
     }
 
     public DeleteRequest(
-        CloudProvider provider,
+        CloudProvider cloudProvider,
         String objectId
     )
     {
-        this.provider = provider;
+        this.cloudProvider = cloudProvider;
         this.objectId = objectId;
     }
 }

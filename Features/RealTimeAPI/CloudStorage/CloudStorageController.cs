@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Net;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,6 @@ namespace WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage;
 [Route("api/v1/image/")]
 public class CloudStorageController : ControllerBase
 {
-    private readonly CloudinaryConfig _config;
     private readonly CloudStorageService _service;
     
     public CloudStorageController(
@@ -20,27 +20,30 @@ public class CloudStorageController : ControllerBase
         CloudStorageService service
     )
     {
-        _config  = config;
         _service = service;
     }
     
     [HttpGet("check-connection")]
-    public async Task<IActionResult> checkConnection()
+    public async Task<IActionResult> checkConnection(
+        CloudProvider cloudProvider
+        )
     {
         try
         {
-            var cloudinary = _config.cloudinary();
-            PingResult? result = await cloudinary.PingAsync();
-
-            if (result.StatusCode != HttpStatusCode.OK) throw new Exception("Fack this");
+            var isConnected = await _service.isConnectedAsync<Boolean>(cloudProvider);
+            if (!isConnected) throw new Exception("Can't connection");
             
-            Console.WriteLine();
+            var response = new APIResponse<Boolean>(
+                status  : HttpStatusCode.OK.ToString(),
+                message : "Edit successfully",
+                data    : isConnected
+            );
             
-            return Ok("Connected to cloud");
+            return Ok(response);
         }
         catch (Exception e)
         {
-            return StatusCode(500, new { status = "Error", message = e.Message });
+            return StatusCode(500, new { message = e.Message });
         }
     }
     
@@ -55,7 +58,8 @@ public class CloudStorageController : ControllerBase
             var id = RouteData.Values["objectId"]!.ToString();
             Console.WriteLine(id);
             
-            var result = await _service.uploadImage(req);
+            var result = await _service.uploadImage<Object>(req);
+            
             var response = new APIResponse<Object>(
                 status  : HttpStatusCode.OK.ToString(),
                 message : "Upload successfully",
@@ -76,7 +80,8 @@ public class CloudStorageController : ControllerBase
     {
         try
         {
-            var result = await _service.editImage(req);
+            var result = await _service.editImage<Object>(req);
+            
             var response = new APIResponse<Object>(
                 status  : HttpStatusCode.OK.ToString(),
                 message : "Edit successfully",
@@ -92,13 +97,19 @@ public class CloudStorageController : ControllerBase
     }
     
     [HttpDelete]
-    public ActionResult deleteImageAPI([FromQuery] DeleteRequest req)
+    public async Task<IActionResult> deleteImageAPI([FromQuery] DeleteRequest req)
     {
         try
         {
-            Console.WriteLine(CustomJson.json(req, CustomJsonOptions.WriteIndented));
-            // var result = _service.delete(req);
-            return Ok();
+            var result = await _service.deleteImage<DeletionResult>(req);
+            
+            var response = new APIResponse<Object>(
+                status  : HttpStatusCode.OK.ToString(),
+                message : "Delete successfully",
+                data    : result
+            );
+            
+            return Ok(response);
         }
         catch (Exception e)
         {

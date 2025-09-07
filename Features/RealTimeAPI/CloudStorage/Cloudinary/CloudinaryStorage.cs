@@ -1,37 +1,54 @@
+using System.Net;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Dtos;
 
 namespace WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Cloudinary;
 
 public class CloudinaryStorage : ICloudStorge
 {
     private readonly CloudinaryConfig _config;
-    private readonly CloudinaryDotNet.Cloudinary _cloundinary;
+    private readonly CloudinaryDotNet.Cloudinary _cloudinary;
 
     public CloudinaryStorage(
         CloudinaryConfig config
     )
     {
         _config = config;
-        _cloundinary = _config.cloudinary();
-    }
-    
-    public Object uploadIamge(IFormFile file)
-    {
-        var stream = file.OpenReadStream();
-        var customFileName = Guid.NewGuid() + "." + file.ContentType.Split("/")[1];
-        
-        var uploadParams = new ImageUploadParams()
-        {
-            File = new FileDescription(file.FileName, stream),
-            PublicId = customFileName
-        };
-        var uploadResult = _cloundinary.Upload(uploadParams);
-        
-        return uploadResult;
+        _cloudinary = _config.cloudinary();
     }
 
-    public Object editImage(EditRequest req)
+    public async Task<T> isConnectedAsync<T>()
+    {
+        PingResult? ping = await _cloudinary.PingAsync();
+        Object result = ping.StatusCode == HttpStatusCode.OK;
+        return (T)result;
+    }
+
+    public async Task<T> uploadImageAsync<T>(IFormFile file)
+    {
+        try
+        {
+            await using var stream = file.OpenReadStream();
+            var publicId = Guid.NewGuid() + "." + file.ContentType.Split("/")[1];
+        
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                PublicId = publicId
+            };
+        
+            Object result = await _cloudinary.UploadAsync(uploadParams);
+            return (T)result;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<T> editImageAsync<T>(EditRequest req)
     {
         var editParams = new ImageUploadParams()
         {
@@ -44,15 +61,14 @@ public class CloudinaryStorage : ICloudStorge
             Overwrite = true,
             Invalidate = true
         };
-        var editResult = _cloundinary.Upload(editParams);
-        
-        return editResult;
+        Object result = await _cloudinary.UploadAsync(editParams);
+        return (T)result;
     }
 
-    public Object deleteImage(string publicId)
+    public async Task<T> deleteImageAsync<T>(string publicId)
     {
         var deletionParams = new DeletionParams(publicId);
-        var deletionResult = _cloundinary.Destroy(deletionParams);
-        return deletionResult;
+        Object result = await _cloudinary.DestroyAsync(deletionParams);
+        return (T)result;
     }
 }

@@ -1,4 +1,4 @@
-namespace WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Cloudinary;
+namespace WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage;
 
 public enum CloudProvider
 {

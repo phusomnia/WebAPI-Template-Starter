@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
+using WebAPI_Template_Starter.Features.RealTimeAPI.Chat;
 using WebAPI_Template_Starter.Infrastructure.Config;
 using WebAPI_Template_Starter.Infrastructure.Database;
 using WebAPI_Template_Starter.Infrastructure.Middleware;
@@ -18,6 +19,7 @@ builder.Services.AddOpenApi();
 ControllerConfig.Configure(builder);
 SecurityConfig.Configure(builder);
 DatabaseConfig.configure(builder);
+IntegrationConfig.Configure(builder);
 
 var app = builder.Build();
 
@@ -34,6 +36,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<ChatHub>("/chatHub");
 
 app.MapControllers();
 

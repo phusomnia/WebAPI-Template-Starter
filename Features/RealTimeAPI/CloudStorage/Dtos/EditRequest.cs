@@ -1,7 +1,8 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Cloudinary;
 
-namespace WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Cloudinary;
+namespace WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Dtos;
 
 public class EditRequest
 {

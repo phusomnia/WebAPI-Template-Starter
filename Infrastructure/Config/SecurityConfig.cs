@@ -1,12 +1,11 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI_Template_Starter.Infrastructure.Security.Authorization;
 using WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 
-namespace WebAPI_Template_Starter.Infrastructure.Security;
+namespace WebAPI_Template_Starter.Infrastructure.Config;
 
 public class SecurityConfig
 {
@@ -14,7 +13,7 @@ public class SecurityConfig
     {
         builder.Services.AddHttpContextAccessor();
         
-        // -- Config permission --
+        // -- Config authorization --
         builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         builder.Services.AddSingleton<IAuthorizationHandler, PermissionRequirementHandler>();
         
