@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebAPI_Template_Starter.Domain.Entities;
 using WebAPI_Template_Starter.Infrastructure.Database;
 using WebAPI_Template_Starter.Infrastructure.Utils;
@@ -7,13 +8,18 @@ namespace WebAPI_Template_Starter.Features.AccountAPI;
 [Repository]
 public class AccountRepository : CrudRepository<Account, String>
 {
-    public readonly AppDbContext _context;
+    private readonly AppDbContext _context;
     
     public AccountRepository(AppDbContext context) : base(context)
     {
         _context = context;
     }
-    
+
+    public async Task<Account?> findByUsername(string username)
+    {
+        return await _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+    }
+
     public async Task<ICollection<Dictionary<String, Object>>> findAccountDetail(string username)
     {
         var query = @"

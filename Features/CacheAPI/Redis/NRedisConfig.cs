@@ -28,7 +28,7 @@ public class NRedisConfig
         {
             EndPoints = { { string.IsNullOrWhiteSpace(url) ? "localhost" : url, port } },
             Password = string.IsNullOrWhiteSpace(password) ? null : password,
-            User = string.IsNullOrWhiteSpace(user) ? null : user,
+            User = string.IsNullOrWhiteSpace(user) ? null : user
         };
 
         if (string.IsNullOrWhiteSpace(keepAlive))

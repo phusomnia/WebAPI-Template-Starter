@@ -4,18 +4,20 @@ using WebAPI_Template_Starter.Infrastructure.Database;
 
 namespace WebAPI_Template_Starter.Infrastructure.Config;
 
-public class DatabaseConfig
+public static class DatabaseConfig
 {
-    public static void configure(WebApplicationBuilder builder)
+    public static IServiceCollection DatabaseConfigExtension(this IServiceCollection services, IConfiguration config)
     {
-        var REMOTE_MYSQL_URL = builder.Configuration.GetConnectionString("REMOTE_MYSQL_URL");
-        builder.Services.AddDbContext<BaseContext>(options => options.UseMySql(
+        var REMOTE_MYSQL_URL = config.GetConnectionString("REMOTE_MYSQL_URL");
+        services.AddDbContext<BaseContext>(options => options.UseMySql(
             REMOTE_MYSQL_URL,
             ServerVersion.AutoDetect(REMOTE_MYSQL_URL)
         ));
-        builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(
+        services.AddDbContext<AppDbContext>(options => options.UseMySql(
             REMOTE_MYSQL_URL,
             ServerVersion.AutoDetect(REMOTE_MYSQL_URL)
         ));
+
+        return services;
     }
 }

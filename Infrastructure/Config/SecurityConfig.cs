@@ -7,32 +7,32 @@ using WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 
 namespace WebAPI_Template_Starter.Infrastructure.Config;
 
-public class SecurityConfig
+public static class SecurityConfig
 {
-    public static void Configure(WebApplicationBuilder builder)
+    public static IServiceCollection SecurityConfigExtension(this IServiceCollection services, IConfiguration config)
     {
-        builder.Services.AddHttpContextAccessor();
+        services.AddHttpContextAccessor();
         
         // -- Config authorization --
-        builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        builder.Services.AddSingleton<IAuthorizationHandler, PermissionRequirementHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddSingleton<IAuthorizationHandler, PermissionRequirementHandler>();
         
         // -- Config openapi security schema -- 
-        builder.Services.AddOpenApi(options =>
+        services.AddOpenApi(options =>
         {
             options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
         });
         
         // -- Config auth service -- 
-        builder.Services.AddAuthentication(opts =>
+        services.AddAuthentication(opts =>
         {
             opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(opts =>
         {
-            String secretKey = builder.Configuration["Jwt:SecretKey"] ?? "";
-            String issuer = builder.Configuration["Jwt:Issuer"] ?? "";
-            String audience = builder.Configuration["Jwt:Audience"] ?? "";
+            String secretKey = config["Jwt:SecretKey"] ?? "";
+            String issuer = config["Jwt:Issuer"] ?? "";
+            String audience = config["Jwt:Audience"] ?? "";
             opts.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateLifetime = true,
@@ -44,6 +44,8 @@ public class SecurityConfig
             };
         });
 
-        builder.Services.AddAuthorization();
+        services.AddAuthorization();
+        
+        return services;
     }
 }

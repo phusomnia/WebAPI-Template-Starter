@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using WebAPI_Template_Starter.Domain.Entities;
 using WebAPI_Template_Starter.Features.AccountAPI;
 using WebAPI_Template_Starter.Infrastructure.Utils;
 
@@ -27,9 +28,9 @@ public class JwtTokenProvider
     {
         var atTime = new DataTable().Compute(config["Jwt:atExpiryInMillisecond"], null).ToString();
 
-        _key = config["Jwt:SecretKey"] ?? "";
-        _issuer = config["Jwt:Issuer"] ?? "";
-        _audience = config["Jwt:Audience"] ?? "";
+        _key          = config["Jwt:SecretKey"] ?? "";
+        _issuer       = config["Jwt:Issuer"]    ?? "";
+        _audience     = config["Jwt:Audience"]  ?? "";
         _atExpireTime = atTime ?? "";
         
         _accountRepo = accountRepo;
@@ -49,6 +50,8 @@ public class JwtTokenProvider
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("role", dictUser["roleName"].ToString())
         };
+        
+        // Add permission
         foreach (var permission in jsonPermission) {
             claims.Add(new Claim("permission", permission));
         }
@@ -70,7 +73,25 @@ public class JwtTokenProvider
         
         return jwtToken;
     }
-    
+
+    public async Task<String> generateRefreshToken<TUser>(TUser user) where TUser : class
+    {
+        var u = await _accountRepo.findByUsername(getValue(user, "username")?.ToString()!);
+
+        var dt = DateTime.UtcNow.AddMilliseconds(Convert.ToInt32(_rtExpireTime));
+        
+        RefreshToken rt = new RefreshToken();
+        rt.Id = Guid.NewGuid().ToString();
+        rt.Token = Guid.NewGuid().ToString();
+        rt.AccountId = u?.Id;
+        rt.ExpiryDate = TimeUtils.AsiaTimeZone(dt);
+        
+        // _refreshTokenRepository.add(rt);
+        
+        return rt.Token;
+    }
+
+
     public JwtSecurityToken? extractAllClaims(String token)
     {
         var handler = new JwtSecurityTokenHandler();

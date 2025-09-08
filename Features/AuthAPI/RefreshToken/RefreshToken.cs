@@ -1,4 +1,4 @@
-namespace WebAPI_Template_Starter.Features.AuthAPI.Auth;
+namespace WebAPI_Template_Starter.Features.AuthAPI.RefreshToken;
 
 public class RefreshToken
 {

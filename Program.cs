@@ -16,10 +16,13 @@ builder.Services.AddAnnotation(Assembly.GetExecutingAssembly());
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-ControllerConfig.Configure(builder);
-SecurityConfig.Configure(builder);
-DatabaseConfig.configure(builder);
-IntegrationConfig.Configure(builder);
+var config = builder.Configuration;
+builder.Services.ControllerConfigExtension();
+builder.Services.NamingConventionExtension(config);
+builder.Services.SecurityConfigExtension(config);
+builder.Services.DatabaseConfigExtension(config);
+builder.Services.IntegrationConfigExtension(config);
+
 
 var app = builder.Build();
 

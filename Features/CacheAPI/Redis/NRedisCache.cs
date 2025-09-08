@@ -1,5 +1,5 @@
-using Newtonsoft.Json;
 using StackExchange.Redis;
+using WebAPI_Template_Starter.Features.CacheAPI.Dtos;
 using WebAPI_Template_Starter.Infrastructure.Utils;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -15,39 +15,26 @@ public class NRedisCache : ICache
         _redis = config.redis();
     }
 
-    public void set(string key, object value)
+    public T isConnectedT<T>()
     {
-        RedisValue redisValue = JsonSerializer.Serialize(value);
-        _redis.StringSet(key, redisValue);
+        Object isConnected = _redis.Multiplexer.IsConnected;
+        return (T)isConnected;
     }
 
-    public TValue get<TValue>(string key)
+    public async Task setAsync(SetCacheRequest req)
     {
-        RedisValue value = _redis.StringGet(key);
-        Console.WriteLine($"Value: {value.ToString()}");
-        
-        if (value.IsNullOrEmpty)
-        {
-            throw new KeyNotFoundException($"The key '{key}' was not found");
-        }
-
-        return JsonSerializer.Deserialize<TValue>(value);
+        var json = JsonSerializer.Serialize(req.value);
+        await _redis.StringSetAsync(req.key, json);
     }
 
-    public async Task setAsync(string key, object value)
+    public async Task<T?> getAsync<T>(GetCacheRequest req)
     {
-        var json = JsonSerializer.Serialize(value);
-        await _redis.StringSetAsync(key, json);
-    }
-
-    public async Task<TValue?> getAsync<TValue>(string key)
-    {
-        var redisValue = await _redis.StringGetAsync(key);
+        var redisValue = await _redis.StringGetAsync(req.key);
         if (!redisValue.HasValue)
         {
             return default;
         }
-        var result = JsonSerializer.Deserialize<TValue>(redisValue)!;
+        var result = JsonSerializer.Deserialize<T>(redisValue);
         return result;
     }
 }
