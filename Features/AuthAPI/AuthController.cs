@@ -1,28 +1,23 @@
 using System.Net;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Features.AccountAPI;
 using WebAPI_Template_Starter.Features.AuthAPI.Dtos;
-using WebAPI_Template_Starter.Infrastructure.Pub_Sub;
 using WebAPI_Template_Starter.Infrastructure.Security.Authorization;
 
 namespace WebAPI_Template_Starter.Features.AuthAPI;
 
 [ApiController]
-[Route("/api/v1/auth/")]
+[Route("/api/v1/")]
 public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;
-    private readonly IPublisher  _publisher;
     
     public AuthController(
-        AuthService authService,
-        IPublisher  publisher
+        AuthService authService
     )
     {
         _authService = authService;
-        _publisher   = publisher;
     }
     
     [HttpPost("register")]
@@ -129,39 +124,38 @@ public class AuthController : ControllerBase
         }
     }
     
-    [HttpPost("publisher")]
-    public async Task<IActionResult> publisherAPI(
-        [FromQuery] String queueName,
-        [FromQuery] String message
-    )
-    {
-        try
-        {
-            await _publisher.publishMessageAsync(queueName, message);
-            return Accepted("Send message queued :D");
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
-    }
+    // [HttpPost("publisher")]
+    // public async Task<IActionResult> publisherAPI(
+    //     [FromQuery] String queueName,
+    //     [FromQuery] String message
+    // )
+    // {
+    //     try
+    //     {
+    //         await _publisher.publishMessageAsync(queueName, message);
+    //         return Accepted("Send message queued :D");
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         return Problem(
+    //             detail: e.Message,
+    //             statusCode: 500
+    //         );
+    //     }
+    // }
     
     
-    [HttpGet("auth/secure-by-role")]
-    [Authorize(Roles = "Admin")]
-    public ActionResult<String> AdminDashboard()
+    [HttpGet("auth/{role}")]
+    [PreAuthorize("hasRole(#role)")]
+    public ActionResult<String> AdminDashboard(String role, String url)
     {
-        return Ok("hi admin");
-        // return Redirect("http://localhost:3000/api/v1/auth/secure-by-permission");
+        return Ok(new { url = url });
     }
     
-    [HttpGet("auth/secure-by-permission")]
-    [Permission("Export")]
-    public ActionResult<Object> exportPDF()
-    {
-        return "PDF is ok";
-    }
+    // [HttpGet("auth/secure-by-permission")]
+    // [Permission("Export")]
+    // public ActionResult<Object> exportPDF()
+    // {
+    //     return "PDF is ok";
+    // }
 }

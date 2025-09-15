@@ -30,10 +30,10 @@ public static class IntegrationConfig
         services.AddSignalR();
         
         // -- pub-sub --
-        services.AddControllers();
-        services.AddSingleton<RabbitMQConfig>();
-        services.AddSingleton<IPublisher, RabbitMQPublisher>();
-        services.AddHostedService<RabbitMQConsumer>();
+        // services.AddControllers();
+        // services.AddSingleton<RabbitMQConfig>();
+        // services.AddSingleton<IPublisher, RabbitMQPublisher>();
+        // services.AddHostedService<RabbitMQConsumer>();
         
         return services;
     }

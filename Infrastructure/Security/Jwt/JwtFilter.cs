@@ -23,9 +23,16 @@ public class JwtFilter : IAsyncAuthorizationFilter
 
     public Task OnAuthorizationAsync(AuthorizationFilterContext ctx)
     {
-        var request = ctx.HttpContext.Request;
+        var path = ctx.HttpContext.Request.Path;
         
+        if (!path.StartsWithSegments("/api/v1/auth", StringComparison.OrdinalIgnoreCase))
+        {
+            return Task.CompletedTask;
+        }
+        
+        var request = ctx.HttpContext.Request;
         var authHeader = request.Headers["Authorization"].FirstOrDefault();
+        
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
         {
             _logger.LogWarning("Unauthorized request: Missing or invalid Authorization header. Path={Path}", request.Path);
@@ -33,24 +40,28 @@ public class JwtFilter : IAsyncAuthorizationFilter
             ctx.Result = new ObjectResult(new APIResponse<object>(
                 status: HttpStatusCode.Unauthorized.ToString(),
                 message: "Missing or invalid Authorization header"
-            ));
+            ))
+            {
+                StatusCode = StatusCodes.Status401Unauthorized
+            };
             return Task.CompletedTask;
         }
 
         var token = authHeader.Substring("Bearer ".Length).Trim();
-        
         var principal = _provider.validateToken(token);
+
         if (principal == null)
         {
-            _logger.LogWarning("Unauthorized request: Invalid/expired token. Path={Path}, Token={Token}", request.Path, token);
-            
             ctx.Result = new ObjectResult(new APIResponse<object>(
                 status: HttpStatusCode.Unauthorized.ToString(),
                 message: "Invalid or expired token"
-            ));
+            ))
+            {
+                StatusCode = StatusCodes.Status401Unauthorized
+            };
             return Task.CompletedTask;
         }
-        
+
         ctx.HttpContext.User = principal;
 
         return Task.CompletedTask;

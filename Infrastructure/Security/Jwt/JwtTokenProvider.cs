@@ -117,14 +117,22 @@ public class JwtTokenProvider
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         
-        return tokenHandler.ValidateToken(token, new TokenValidationParameters
+        try
         {
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = _issuer,
-            ValidAudience = _audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_key)),
-            ClockSkew = TimeSpan.Zero
-        }, out _);
+            return tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _issuer,
+                ValidAudience = _audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_key)),
+                ClockSkew = TimeSpan.Zero
+            }, out _);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
     }
 }

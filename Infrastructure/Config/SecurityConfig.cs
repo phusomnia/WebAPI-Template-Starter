@@ -1,8 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
-using WebAPI_Template_Starter.Infrastructure.Security.Authorization;
 using WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 
 namespace WebAPI_Template_Starter.Infrastructure.Config;
@@ -11,11 +9,15 @@ public static class SecurityConfig
 {
     public static IServiceCollection SecurityConfigExtension(this IServiceCollection services, IConfiguration config)
     {
-        services.AddHttpContextAccessor();
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<JwtFilter>();
+        });
         
+        // services.AddHttpContextAccessor();
         // -- Config authorization --
-        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        services.AddSingleton<IAuthorizationHandler, PermissionRequirementHandler>();
+        // services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        // services.AddSingleton<IAuthorizationHandler, PermissionRequirementHandler>();
         
         // -- Config openapi security schema -- 
         services.AddOpenApi(options =>
