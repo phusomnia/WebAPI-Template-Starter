@@ -3,6 +3,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Features.CacheAPI.Dtos;
+using WebAPI_Template_Starter.Infrastructure.Utils;
 
 namespace WebAPI_Template_Starter.Features.CacheAPI;
 
@@ -24,25 +25,15 @@ public class CacheController : ControllerBase
         CacheProvider cacheProvider
         )
     {
-        try
-        {
-            var result = _service.isConnected<Boolean>(cacheProvider);
-            
-            var response = new APIResponse<Object>(
-                status  : HttpStatusCode.OK.ToString(),
-                message : "Connect is ok",
-                data    : result
-            );
-            
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        var result = _service.isConnected<Boolean>(cacheProvider);
+        
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Connect is ok",
+            result
+        );
+
+        return StatusCode(response.statusCode, response);
     }
     
     [HttpGet()]
@@ -53,9 +44,9 @@ public class CacheController : ControllerBase
             var result = await _service.getAsync<Object>(req);
             
             var response = new APIResponse<Object>(
-                status  : HttpStatusCode.OK.ToString(),
-                message : "Connect is ok",
-                data: result
+                HttpStatusCode.OK.value(),
+                "Connect is ok",
+                result
             );
             
             return Ok(response);
@@ -79,8 +70,8 @@ public class CacheController : ControllerBase
             await _service.setAsync(req);
             
             var response = new APIResponse<Object>(
-                status  : HttpStatusCode.OK.ToString(),
-                message : "Connect is ok",
+                HttpStatusCode.OK.value(),
+                "Set value successfully",
                 data: req
             );
             

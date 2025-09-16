@@ -48,18 +48,18 @@ public class AppDbContext : BaseContext
     public async Task<ICollection<Dictionary<String, Object>>> executeSqlRawAsync(String query, params Object[] parameters)
     {
         var dictResult = new Collection<Dictionary<String, Object>>();
-
+    
         await using var connection = new MySqlConnection(_connectionString);
         await connection.OpenAsync();
-
+    
         await using var command = new MySqlCommand(query, connection);
         for (int i = 0; i < parameters.Length; ++i)
         {
             command.Parameters.AddWithValue($"{i}", parameters[i]);
         }
-
+    
         await using var reader = await command.ExecuteReaderAsync();
-
+    
         while (await reader.ReadAsync())
         {
             var dict = Enumerable.Range(0, reader.FieldCount)
@@ -69,7 +69,7 @@ public class AppDbContext : BaseContext
                 );
             dictResult.Add(dict);
         }
-
+    
         return dictResult;
     }
 }

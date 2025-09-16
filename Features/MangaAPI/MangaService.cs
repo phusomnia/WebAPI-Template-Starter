@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices.JavaScript;
 using WebAPI_Template_Starter.Domain.Entities;
+using WebAPI_Template_Starter.Infrastructure.CustomException;
 using WebAPI_Template_Starter.Infrastructure.Utils;
 
 namespace WebAPI_Template_Starter.Features.MangaAPI;
@@ -14,10 +15,9 @@ public class MangaService
         _repo = repo;
     }
     
-    public async Task<ICollection<Dictionary<String, Object>>> getManga()
+    public async Task<ICollection<Manga>> getManga()
     {
-        String query = "SELECT * FROM Manga";
-        return await _repo.executeSqlRawAsync(query);
+        return await _repo.getAllAsync();
     }
 
     public async Task<Manga> uploadManga(MangaDTO req)
@@ -33,7 +33,7 @@ public class MangaService
     public async Task<Manga?> editManga(String id, MangaDTO req)
     {
         var manga = await _repo.findByIdAsync(id);
-        if (manga == null) throw new Exception("Can't find manga");
+        if (manga == null) throw APIException.BadRequest("Can't find manga");
         manga.Title = req.Title;
         var affectedRows = await _repo.updateAsync(manga);
         if(affectedRows < 0) throw new ApplicationException("update failed");
@@ -43,7 +43,7 @@ public class MangaService
     public async Task<Manga> deleteManga(String id)
     {
         var manga = await _repo.findByIdAsync(id);
-        if (manga == null) throw new Exception("Can't find manga");
+        if (manga == null) throw APIException.BadRequest("Can't find manga");
         var affectedRows = await _repo.deleteAsync(manga);
         if(affectedRows < 0) throw new ApplicationException("delete failed");
         return manga;

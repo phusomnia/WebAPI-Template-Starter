@@ -6,8 +6,10 @@ using FluentEmail.Core.Models;
 using WebAPI_Template_Starter.Domain.Entities;
 using WebAPI_Template_Starter.Features.AccountAPI;
 using WebAPI_Template_Starter.Features.AuthAPI.Dtos;
+using WebAPI_Template_Starter.Features.AuthAPI.Utils;
 using WebAPI_Template_Starter.Features.CacheAPI;
 using WebAPI_Template_Starter.Features.CacheAPI.Dtos;
+using WebAPI_Template_Starter.Infrastructure.CustomException;
 using WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 using WebAPI_Template_Starter.Infrastructure.Utils;
 
@@ -54,18 +56,20 @@ public class AuthService
         return acc;
     }
 
-    public async Task<Dictionary<String, Object>> login(AccountDTO req)
+    public Dictionary<String, Object> authenticate(AccountDTO req)
     {
-        var user = (await _accountRepo.findAccountDetail(req.username)).First() ?? throw new ApplicationException("Can't find username");
-        Console.WriteLine(CustomJson.json(user, CustomJsonOptions.WriteIndented));
-        Boolean checkPassword = _passwordHasher.verifyPassword(user["username"].ToString(), req.password, user["password"].ToString());
+        var user = _accountRepo.findAccountDetail(req.username).FirstOrDefault();
+
+        if (user == null) throw APIException.BadRequest("Can't find username");
+
+        Boolean checkPassword = _passwordHasher.verifyPassword(user["username"].ToString()!, req.password, user["password"].ToString()!);
         
-        if(!checkPassword) throw new ApplicationException("Invalid password");
+        if(!checkPassword) throw APIException.BadRequest("Wrong password");
         
-        String accessToken = await _tokenProvider.generateAccessToken(user);
-        String refreshToken = await _tokenProvider.generateRefreshToken(user);
+        String accessToken = _tokenProvider.generateAccessToken(user);
+        String refreshToken = _tokenProvider.generateRefreshToken(user);
         
-        return toDict(accessToken, refreshToken);
+        return toToken(accessToken, refreshToken);
     }
     
     public async Task<SendResponse> sendEmail(EmailRequest req)
@@ -134,11 +138,11 @@ public class AuthService
                 value: payload
             );
             await _cacheService.createInstance(CacheProvider.Redis).setAsync(retry);
-            throw new Exception("Invalid code");
+            throw APIException.BadRequest("Otp is expired");
         }
     }
 
-    public Dictionary<String, Object> toDict(String accessToken, String refreshToken)
+    public Dictionary<String, Object> toToken(String accessToken, String refreshToken)
     {
         return new Dictionary<string, object>
         {

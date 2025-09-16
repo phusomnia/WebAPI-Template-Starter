@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using WebAPI_Template_Starter.Infrastructure.Security;
+using WebAPI_Template_Starter.Infrastructure.Utils;
 
-namespace WebAPI_Template_Starter.Infrastructure.Utils;
+namespace WebAPI_Template_Starter.Features.AuthAPI.Utils;
 
 [Component]
 public class PBKDF2PasswordHasher : IPasswordHasher

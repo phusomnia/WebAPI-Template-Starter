@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Domain.Entities;
+using WebAPI_Template_Starter.Infrastructure.Utils;
 
 namespace WebAPI_Template_Starter.Features.MangaAPI;
 
@@ -22,24 +23,14 @@ public class MangaController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> getMangaAPI()
     {
-        try
-        {
-            var result = await _service.getManga();
-            var response = new APIResponse<Object>(
-                status: HttpStatusCode.OK.ToString(),
-                message: "Get manga",
-                data: result
-            );
-            
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        var result = await _service.getManga();
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Get manga",
+            result
+        );
+        
+        return Ok(response);
     }
     
     [HttpPost]
@@ -47,24 +38,14 @@ public class MangaController : ControllerBase
         [FromBody] MangaDTO dto    
     )
     {
-        try
-        {
-            var result = await _service.uploadManga(dto);
-            var response = new APIResponse<Object>(
-                status: HttpStatusCode.OK.ToString(),
-                message: "Get manga",
-                data: result
-            );
-            
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        var result = await _service.uploadManga(dto);
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Get manga",
+            result
+        );
+        
+        return Ok(response);
     }
     
     [HttpPut("{id}")]
@@ -72,50 +53,28 @@ public class MangaController : ControllerBase
         [FromBody] MangaDTO dto
     )
     {
-        try
-        {
-            var id = RouteData.Values["id"]?.ToString();
-            var result = await _service.editManga(id, dto);
-            var response = new APIResponse<Object>(
-                status: HttpStatusCode.OK.ToString(),
-                message: "Get manga",
-                data: result
-            );
-            
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        var id = RouteData.Values["id"]?.ToString();
+        var result = await _service.editManga(id, dto);
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Get manga",
+            result
+        );
         
+        return Ok(response);
     }
     
     [HttpDelete("{id}")]
     public async Task<ActionResult> deleteMangaAPI()
     {
-        try
-        {
-            var id = RouteData.Values["id"]?.ToString();
-            var result = await _service.deleteManga(id);
-            var response = new APIResponse<Object>(
-                status: HttpStatusCode.OK.ToString(),
-                message: "Get manga",
-                data: result
-            );
-            
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        var id = RouteData.Values["id"]?.ToString();
+        var result = await _service.deleteManga(id);
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Get manga",
+            result
+        );
         
+        return Ok(response);
     }
 }

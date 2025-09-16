@@ -2,14 +2,14 @@ namespace WebAPI_Template_Starter.Domain.Core.BaseModel;
 
 public class BaseResponse
 {
-    public String status { get; set; }
+    public int statusCode { get; set; }
     public String message { get; set; }
 
     public BaseResponse() { }
 
-    public BaseResponse(String status,String message)
+    public BaseResponse(int statusCode,String message)
     {
-        this.status = status;
+        this.statusCode = statusCode;
         this.message = message;
     }
 }

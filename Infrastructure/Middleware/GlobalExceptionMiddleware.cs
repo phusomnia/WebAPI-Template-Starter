@@ -1,4 +1,5 @@
 using System.Net;
+using WebAPI_Template_Starter.Infrastructure.CustomException;
 
 namespace WebAPI_Template_Starter.Infrastructure.Middleware;
 
@@ -22,26 +23,34 @@ public class GlobalExceptionMiddleware
         {
             await _next(ctx);
         }
+        catch (APIException ex)
+        {
+            _logger.LogError(ex.Message, "API Exception");
+            await HandleExceptionAsync(ctx, ex.statusCode, ex.Message);
+        }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(ctx, ex);
+            _logger.LogError(ex.Message, "Other Exception");
+            await HandleExceptionAsync(ctx, StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
 
-    private Task HandleExceptionAsync(HttpContext ctx, Exception ex)
+    private async Task HandleExceptionAsync(
+        HttpContext ctx, 
+        Int32 statusCode,
+        Object message
+    )
     {
+        ctx.Response.StatusCode = statusCode;
         ctx.Response.ContentType = "application/json";
-        ctx.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        
-        _logger.LogError(ex.Message);
-        
-        var response = new
-        {
-            ctx.Response.StatusCode,
-            message = ex.Message
-        };
 
-        return ctx.Response.WriteAsJsonAsync(response);
+        var errRes = new ErrorResponse(
+            statusCode: statusCode,
+            message: message,
+            timeStamp: DateTime.UtcNow
+        );
+        
+        await ctx.Response.WriteAsJsonAsync(errRes);
     }
 }
 

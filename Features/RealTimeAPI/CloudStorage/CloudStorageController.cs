@@ -28,23 +28,16 @@ public class CloudStorageController : ControllerBase
         CloudProvider cloudProvider
         )
     {
-        try
-        {
             var isConnected = await _service.isConnectedAsync<Boolean>(cloudProvider);
             if (!isConnected) throw new Exception("Can't connection");
             
             var response = new APIResponse<Boolean>(
-                status  : HttpStatusCode.OK.ToString(),
-                message : "Edit successfully",
-                data    : isConnected
+                HttpStatusCode.OK.value(),
+                "Edit successfully",
+                isConnected
             );
             
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new { message = e.Message });
-        }
+            return StatusCode(response.statusCode, response);
     }
     
     [HttpPost]
@@ -61,9 +54,9 @@ public class CloudStorageController : ControllerBase
             var result = await _service.uploadImage<Object>(req);
             
             var response = new APIResponse<Object>(
-                status  : HttpStatusCode.OK.ToString(),
-                message : "Upload successfully",
-                data    : result
+                HttpStatusCode.OK.value(),
+                "Upload successfully",
+                result
             );
             
             return Ok(response);
@@ -83,9 +76,9 @@ public class CloudStorageController : ControllerBase
             var result = await _service.editImage<Object>(req);
             
             var response = new APIResponse<Object>(
-                status  : HttpStatusCode.OK.ToString(),
-                message : "Edit successfully",
-                data    : result
+                HttpStatusCode.OK.value(),
+                "Edit successfully",
+                result
             );
             
             return Ok(response);
@@ -104,9 +97,9 @@ public class CloudStorageController : ControllerBase
             var result = await _service.deleteImage<DeletionResult>(req);
             
             var response = new APIResponse<Object>(
-                status  : HttpStatusCode.OK.ToString(),
-                message : "Delete successfully",
-                data    : result
+                HttpStatusCode.OK.value(),
+                "Delete successfully",
+                result
             );
             
             return Ok(response);

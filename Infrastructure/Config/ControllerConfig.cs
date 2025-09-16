@@ -19,6 +19,20 @@ public static class ControllerConfig
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
 
+        services.AddCors(options =>
+        {
+            options.AddPolicy(
+                "AllowAll",
+                policy => policy
+                    .WithOrigins("http://localhost:1337") 
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials()
+            );
+        });
+
+        services.AddControllers();
+
         return services;
     }
 }

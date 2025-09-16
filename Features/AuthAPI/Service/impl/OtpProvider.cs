@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using WebAPI_Template_Starter.Infrastructure.Utils;
 
-namespace WebAPI_Template_Starter.Features.AuthAPI;
+namespace WebAPI_Template_Starter.Features.AuthAPI.Utils;
 
 [Component]
 public class OtpProvider

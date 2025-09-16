@@ -1,80 +1,81 @@
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc;
+using DynamicExpresso;
 using Microsoft.AspNetCore.Mvc.Filters;
+using WebAPI_Template_Starter.Infrastructure.CustomException;
 
 namespace WebAPI_Template_Starter.Infrastructure.Security.Authorization;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
 public class PreAuthorizeAttribute : Attribute, IAsyncAuthorizationFilter
 {
-    private readonly string _expression;
+    private readonly String _expression;
+    private static readonly Interpreter _interpreter = new();
+    private static readonly Dictionary<String, Lambda> _cache = new();
 
-    public PreAuthorizeAttribute(string expression)
+    public PreAuthorizeAttribute(String expression)
     {
         _expression = expression;
     }
 
-    public Task OnAuthorizationAsync(AuthorizationFilterContext context)
+    public Task OnAuthorizationAsync(AuthorizationFilterContext ctx)
     {
-        var user = context.HttpContext.User;
+        var user = ctx.HttpContext.User;
 
-        if (!EvaluateExpression(user, _expression, context))
+        var variables = new Dictionary<String, Object?>();
+
+        foreach (var kv in ctx.RouteData.Values)
         {
-            context.Result = new UnauthorizedObjectResult(new
-            {
-                message = "You do not have permission to access this resource."
-            });
+            variables[kv.Key] = kv.Value?.ToString();
+        }
+        
+        foreach (var kv in ctx.HttpContext.Request.Query)
+        {
+            variables[kv.Key] = kv.Value.ToString();
+        }
+
+        variables["principal"] = new PrincipalWrapper(user);
+
+        _interpreter.SetFunction("hasRole", (Func<String, Boolean>)(role => user.IsInRole(role)));
+        _interpreter.SetFunction("hasAuthority", (Func<string, bool>)(auth =>
+            user.Claims.Any(c => c.Type == "permission" && c.Value == auth))
+        );
+
+        var parsedExpression = Regex.Replace(
+            _expression,
+            @"#(\w+)",
+            m => m.Groups[1].Value
+        );
+
+        if (!_cache.TryGetValue(parsedExpression, out var lambda))
+        {
+            var parameters = variables.Select(v => 
+                new Parameter(v.Key, v.Value?.GetType() ?? typeof(String))
+            ).ToArray();
+
+            lambda = _interpreter.Parse(parsedExpression, typeof(Boolean), parameters);
+            _cache[parsedExpression] = lambda;
+        }
+        
+        bool allowed = (bool)lambda.Invoke(variables.Values.ToArray());
+
+        if (!allowed)
+        {
+            throw new APIException(StatusCodes.Status403Forbidden, "You do not have permission to access this resource.");
         }
 
         return Task.CompletedTask;
     }
 
-    private bool EvaluateExpression(ClaimsPrincipal user, string expression, AuthorizationFilterContext context)
+    public class PrincipalWrapper
     {
-        expression = ResolvePlaceholders(expression, context);
-        Console.WriteLine(expression);
-        
-        var roleMatch = Regex.Match(expression, @"hasRole\('([^']+)'\)", RegexOptions.IgnoreCase);
-        if (roleMatch.Success)
-        {
-            var role = roleMatch.Groups[1].Value;
-            return user.IsInRole(role);
-        }
-        
-        var authMatch = Regex.Match(expression, @"hasAuthority\('([^']+)'\)", RegexOptions.IgnoreCase);
-        if (authMatch.Success)
-        {
-            var authority = authMatch.Groups[1].Value;
-            return user.Claims.Any(c => c.Type == "permission" && c.Value == authority);
-        }
-        
-        return false;
-    }
-    
-    private string ResolvePlaceholders(string expression, AuthorizationFilterContext context)
-    {
-        var matches = Regex.Matches(expression, @"#(\w+)");
-        foreach (Match match in matches)
-        {
-            Console.WriteLine(match);
-            var paramName = match.Groups[1].Value;
-            string? value = null;
-            
-            if (context.RouteData.Values.TryGetValue(paramName, out var routeValue))
-            {
-                value = routeValue?.ToString();
-            }
-            else if (context.HttpContext.Request.Query.TryGetValue(paramName, out var queryValue))
-            {
-                value = queryValue.ToString();
-            }
-            if (value != null)
-            {
-                expression = expression.Replace(match.Value, $"'{value}'");
-            }
-        }
+        public string? Id { get; set; }
+        public ClaimsPrincipal User { get; set; }
 
-        return expression;
+        public PrincipalWrapper(ClaimsPrincipal user)
+        {
+            User = user;
+            Id = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
     }
 }

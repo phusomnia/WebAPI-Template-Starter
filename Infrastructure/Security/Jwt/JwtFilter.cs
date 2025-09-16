@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using WebAPI_Template_Starter.Domain.Core.BaseModel;
+using WebAPI_Template_Starter.Infrastructure.CustomException;
 using WebAPI_Template_Starter.Infrastructure.Utils;
 
 namespace WebAPI_Template_Starter.Infrastructure.Security.Jwt;
@@ -37,14 +38,7 @@ public class JwtFilter : IAsyncAuthorizationFilter
         {
             _logger.LogWarning("Unauthorized request: Missing or invalid Authorization header. Path={Path}", request.Path);
             
-            ctx.Result = new ObjectResult(new APIResponse<object>(
-                status: HttpStatusCode.Unauthorized.ToString(),
-                message: "Missing or invalid Authorization header"
-            ))
-            {
-                StatusCode = StatusCodes.Status401Unauthorized
-            };
-            return Task.CompletedTask;
+            throw new APIException(StatusCodes.Status401Unauthorized, $"Unauthorized request: Missing or invalid Authorization header. Path={request.Path}");
         }
 
         var token = authHeader.Substring("Bearer ".Length).Trim();
@@ -52,14 +46,7 @@ public class JwtFilter : IAsyncAuthorizationFilter
 
         if (principal == null)
         {
-            ctx.Result = new ObjectResult(new APIResponse<object>(
-                status: HttpStatusCode.Unauthorized.ToString(),
-                message: "Invalid or expired token"
-            ))
-            {
-                StatusCode = StatusCodes.Status401Unauthorized
-            };
-            return Task.CompletedTask;
+            throw new APIException(StatusCodes.Status401Unauthorized, "Token is expired");
         }
 
         ctx.HttpContext.User = principal;

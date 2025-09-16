@@ -1,4 +1,4 @@
-namespace WebAPI_Template_Starter.Infrastructure.Security;
+namespace WebAPI_Template_Starter.Features.AuthAPI.Utils;
 
 public interface IPasswordHasher
 {

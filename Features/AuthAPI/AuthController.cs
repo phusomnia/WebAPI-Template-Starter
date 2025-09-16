@@ -4,6 +4,7 @@ using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Features.AccountAPI;
 using WebAPI_Template_Starter.Features.AuthAPI.Dtos;
 using WebAPI_Template_Starter.Infrastructure.Security.Authorization;
+using WebAPI_Template_Starter.Infrastructure.Utils;
 
 namespace WebAPI_Template_Starter.Features.AuthAPI;
 
@@ -25,52 +26,31 @@ public class AuthController : ControllerBase
         [FromBody] AccountDTO req
     )
     {
-        try
-        {
-            var result = await _authService.register(req);
-        
-            var response = new APIResponse<Object>(
-                HttpStatusCode.OK.ToString(),
-                "Register successfully",
-                result
-            );
+        var result = await _authService.register(req);
+    
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Register successfully",
+            result
+        );
 
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        return StatusCode(response.statusCode, response);
     }
     
     [HttpPost("login")]
-    public async Task<IActionResult> loginAccountAPI(
+    public IActionResult loginAccountAPI(
         [FromBody] AccountDTO req
     )
     {
-        try
-        {
+        var result = _authService.authenticate(req);
 
-            var result = await _authService.login(req);
-            
-            var response = new APIResponse<Object>(
-                HttpStatusCode.OK.ToString(),
-                "Login successfully",
-                result
-            );
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Login successfully",
+            result
+        );
 
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        return StatusCode(response.statusCode, response);
     }
     
     [HttpPost("forget-password")]
@@ -78,25 +58,15 @@ public class AuthController : ControllerBase
         String email
     )
     {
-        try
-        {
-            var result = await _authService.generateOTP(email);
-            
-            var response = new APIResponse<Object>(
-                HttpStatusCode.OK.ToString(),
-                "Send otp successfully",
-                result
-            );
-            
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        var result = await _authService.generateOTP(email);
+        
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Send otp successfully",
+            result
+        );
+        
+        return StatusCode(response.statusCode, response);
     }
     
     [HttpPost("verify-otp")]
@@ -104,24 +74,14 @@ public class AuthController : ControllerBase
         VerifyOtpRequest req
     )
     {
-        try
-        {
-            await _authService.verifyOtp(req);
-            
-            var response = new APIResponse<Object>(
-                HttpStatusCode.OK.ToString(),
-                "verified successfully"
-            );
-            
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return Problem(
-                detail: e.Message,
-                statusCode: 500
-            );
-        }
+        await _authService.verifyOtp(req);
+        
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "verified successfully"
+        );
+        
+        return StatusCode(response.statusCode, response);
     }
     
     // [HttpPost("publisher")]
@@ -145,11 +105,18 @@ public class AuthController : ControllerBase
     // }
     
     
-    [HttpGet("auth/{role}")]
-    [PreAuthorize("hasRole(#role)")]
-    public ActionResult<String> AdminDashboard(String role, String url)
+    [HttpGet("auth/{url}")]
+    [PreAuthorize("hasRole(#roleAllowed)")]
+    public ActionResult AdminDashboard(
+        [FromQuery] String roleAllowed, 
+        String url)
     {
-        return Ok(new { url = url });
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            url
+        );
+
+        return StatusCode(response.statusCode, response);
     }
     
     // [HttpGet("auth/secure-by-permission")]

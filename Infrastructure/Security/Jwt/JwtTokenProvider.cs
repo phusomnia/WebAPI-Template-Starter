@@ -36,12 +36,12 @@ public class JwtTokenProvider
         _accountRepo = accountRepo;
     }
 
-    public async Task<String> generateAccessToken<TUser>(TUser user) where TUser : class
+    public String generateAccessToken<TUser>(TUser user) where TUser : class
     {
         var dictUser = ConverterUtils.toDict(user);
         Console.WriteLine($"GenToken: {CustomJson.json(dictUser, CustomJsonOptions.WriteIndented)}");
 
-        var permissions = (await _accountRepo.findAccountDetail(dictUser["username"].ToString())).Select(x => x["permissionList"]);
+        var permissions = _accountRepo.findAccountDetail(dictUser["username"].ToString()).Select(x => x["permissionList"]);
         var jsonPermission = JsonConvert.DeserializeObject<List<String>>(permissions.FirstOrDefault().ToString());
         
         var claims = new List<Claim>
@@ -74,9 +74,9 @@ public class JwtTokenProvider
         return jwtToken;
     }
 
-    public async Task<String> generateRefreshToken<TUser>(TUser user) where TUser : class
+    public String generateRefreshToken<TUser>(TUser user) where TUser : class
     {
-        var u = await _accountRepo.findByUsername(getValue(user, "username")?.ToString()!);
+        var u = _accountRepo.findByUsername(getValue(user, "username")?.ToString()!);
 
         var dt = DateTime.UtcNow.AddMilliseconds(Convert.ToInt32(_rtExpireTime));
         

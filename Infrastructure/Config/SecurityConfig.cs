@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 
@@ -45,6 +46,8 @@ public static class SecurityConfig
                 ClockSkew = TimeSpan.Zero
             };
         });
+        
+        services.AddMemoryCache();
 
         services.AddAuthorization();
         
