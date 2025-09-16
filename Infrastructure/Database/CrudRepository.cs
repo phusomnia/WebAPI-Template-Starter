@@ -13,36 +13,13 @@ public class CrudRepository<TEntity, TKey> : ICrudRepository<TEntity, TKey> wher
         _dbSet = context.Set<TEntity>();
     }
 
-    public async Task<ICollection<Dictionary<String, Object>>> executeSqlRawAsync(String query, params Object[] parameters)
-    {
-        return await _context.executeSqlRawAsync(query, parameters);
-    }
+    public async Task<ICollection<TEntity>> getAllAsync() => await _dbSet.ToListAsync();
     
-    public async Task<ICollection<TEntity>> getAllAsync()
-    {
-        return await _context.Set<TEntity>().ToListAsync();
-    }
+    public async Task<TEntity?> findByIdAsync(TKey id) => await _dbSet.FindAsync(id);
+    
+    public async Task<Int32> addAsync(TEntity entity) { await _dbSet.AddAsync(entity); return await _context.SaveChangesAsync(); }
 
-    public async Task<TEntity?> findByIdAsync(TKey id)
-    {
-        return await _dbSet.FindAsync(id);
-    }
+    public async Task<Int32> updateAsync(TEntity entity){ _dbSet.Update(entity); return await _context.SaveChangesAsync(); }
 
-    public async Task<Int32> addAsync(TEntity entity)
-    {
-        await _dbSet.AddAsync(entity);
-        return await _context.SaveChangesAsync();
-    }
-
-    public async Task<Int32> updateAsync(TEntity entity)
-    {
-        _dbSet.Update(entity);
-        return await _context.SaveChangesAsync();
-    }
-
-    public async Task<Int32> deleteAsync(TEntity entity)
-    {
-        _dbSet.Remove(entity);
-        return await _context.SaveChangesAsync();
-    }
+    public async Task<Int32> deleteAsync(TEntity entity){ _dbSet.Remove(entity); return await _context.SaveChangesAsync(); }
 }
