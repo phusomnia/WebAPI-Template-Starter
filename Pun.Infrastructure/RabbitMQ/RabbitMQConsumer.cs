@@ -1,8 +1,9 @@
 using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using WebAPI_Template_Starter.Infrastructure.RabbitMQ;
 
-namespace WebAPI_Template_Starter.Infrastructure.Pub_Sub;
+namespace WebAPI_Template_Starter.Pun.Infrastructure.RabbitMQ;
 
 public class RabbitMQConsumer : BackgroundService
 {

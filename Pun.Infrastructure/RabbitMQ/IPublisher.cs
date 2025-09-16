@@ -1,4 +1,4 @@
-namespace WebAPI_Template_Starter.Infrastructure.Pub_Sub;
+namespace WebAPI_Template_Starter.Infrastructure.RabbitMQ;
 
 public interface IPublisher
 {

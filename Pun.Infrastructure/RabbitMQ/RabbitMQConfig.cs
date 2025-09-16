@@ -1,7 +1,7 @@
 using RabbitMQ.Client;
 using WebAPI_Template_Starter.Infrastructure.Configuration;
 
-namespace WebAPI_Template_Starter.Infrastructure.Pub_Sub;
+namespace WebAPI_Template_Starter.Infrastructure.RabbitMQ;
 
 [Configuration]
 public class RabbitMQConfig

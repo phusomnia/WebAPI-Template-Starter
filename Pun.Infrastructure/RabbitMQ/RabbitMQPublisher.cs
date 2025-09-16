@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using RabbitMQ.Client;
+using WebAPI_Template_Starter.Infrastructure.RabbitMQ;
 
 namespace WebAPI_Template_Starter.Infrastructure.Pub_Sub;
 

@@ -39,8 +39,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Application\Features\" />
-      <Folder Include="Domain\Entities\" />
+      <Folder Include="Pun.Application\Features\" />
+      <Folder Include="Pun.Domain\Entities\" />
     </ItemGroup>
 
 </Project>
