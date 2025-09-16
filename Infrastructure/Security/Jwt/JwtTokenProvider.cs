@@ -1,5 +1,6 @@
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.InteropServices.JavaScript;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
@@ -36,12 +37,12 @@ public class JwtTokenProvider
         _accountRepo = accountRepo;
     }
 
-    public String generateAccessToken<TUser>(TUser user) where TUser : class
+    public async Task<String> generateAccessToken<TUser>(TUser user) where TUser : class
     {
         var dictUser = ConverterUtils.toDict(user);
         Console.WriteLine($"GenToken: {CustomJson.json(dictUser, CustomJsonOptions.WriteIndented)}");
 
-        var permissions = _accountRepo.findAccountDetail(dictUser["username"].ToString()).Select(x => x["permissionList"]);
+        var permissions = (await _accountRepo.findAccountDetail(dictUser["username"].ToString()!)).Select(x => x["permissionList"]);
         var jsonPermission = JsonConvert.DeserializeObject<List<String>>(permissions.FirstOrDefault().ToString());
         
         var claims = new List<Claim>
@@ -73,23 +74,7 @@ public class JwtTokenProvider
         
         return jwtToken;
     }
-
-    public String generateRefreshToken<TUser>(TUser user) where TUser : class
-    {
-        var u = _accountRepo.findByUsername(getValue(user, "username")?.ToString()!);
-
-        var dt = DateTime.UtcNow.AddMilliseconds(Convert.ToInt32(_rtExpireTime));
-        
-        RefreshToken rt = new RefreshToken();
-        rt.Id = Guid.NewGuid().ToString();
-        rt.Token = Guid.NewGuid().ToString();
-        rt.AccountId = u?.Id;
-        rt.ExpiryDate = TimeUtils.AsiaTimeZone(dt);
-        
-        // _refreshTokenRepository.add(rt);
-        
-        return rt.Token;
-    }
+    
 
 
     public JwtSecurityToken? extractAllClaims(String token)
@@ -134,5 +119,23 @@ public class JwtTokenProvider
             Console.WriteLine(ex.Message);
             return null;
         }
+    }
+    
+    // --- REFRESH TOKEN ---
+    public async Task<String> generateRefreshToken<TUser>(TUser user) where TUser : class
+    {
+        var u = await _accountRepo.findByUsername(getValue(user, "username")?.ToString()!);
+
+        var dt = DateTime.UtcNow.AddMilliseconds(Convert.ToInt32(_rtExpireTime));
+        
+        RefreshToken rt = new RefreshToken();
+        rt.Id = Guid.NewGuid().ToString();
+        rt.Token = Guid.NewGuid().ToString();
+        rt.AccountId = u?.Id;
+        rt.ExpiryDate = TimeUtils.AsiaTimeZone(dt);
+        
+        // _refreshTokenRepository.add(rt);
+        
+        return rt.Token;
     }
 }

@@ -26,29 +26,17 @@ public class AuthController : ControllerBase
         [FromBody] AccountDTO req
     )
     {
-        var result = await _authService.register(req);
-    
-        var response = new APIResponse<Object>(
-            HttpStatusCode.OK.value(),
-            "Register successfully",
-            result
-        );
-
+        var response = await _authService.register(req);
+        
         return StatusCode(response.statusCode, response);
     }
     
     [HttpPost("login")]
-    public IActionResult loginAccountAPI(
+    public async Task<IActionResult> loginAccountAPI(
         [FromBody] AccountDTO req
     )
     {
-        var result = _authService.authenticate(req);
-
-        var response = new APIResponse<Object>(
-            HttpStatusCode.OK.value(),
-            "Login successfully",
-            result
-        );
+        var response = await _authService.authenticate(req);
 
         return StatusCode(response.statusCode, response);
     }
@@ -58,13 +46,7 @@ public class AuthController : ControllerBase
         String email
     )
     {
-        var result = await _authService.generateOTP(email);
-        
-        var response = new APIResponse<Object>(
-            HttpStatusCode.OK.value(),
-            "Send otp successfully",
-            result
-        );
+        var response = await _authService.generateOTP(email);
         
         return StatusCode(response.statusCode, response);
     }

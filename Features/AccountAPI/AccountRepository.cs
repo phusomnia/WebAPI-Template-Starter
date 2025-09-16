@@ -17,12 +17,12 @@ public class AccountRepository : CrudRepository<Account, String>
         _context = context;
     }
 
-    public Account? findByUsername(string username)
+    public Task<Account?> findByUsername(string username)
     {
-        return _context.Accounts.FirstOrDefault(x => x.Username == username);
+        return _context.Accounts.FirstOrDefaultAsync(x => x.Username == username);
     }
 
-    public ICollection<Dictionary<String, Object>> findAccountDetail(string username)
+    public async Task<ICollection<Dictionary<String, Object>>> findAccountDetail(string username)
     {
         var query = @"
                         SELECT
@@ -37,7 +37,7 @@ public class AccountRepository : CrudRepository<Account, String>
                         LEFT JOIN Permission p ON p.id = rp.permissionId
                         WHERE acc.username = ?
                         GROUP BY acc.id, acc.username, r.name;";
-        var result = _context.executeSqlRaw(query, username);
+        var result = await _context.executeSqlRawAsync(query, username);
         Console.WriteLine(CustomJson.json(result, CustomJsonOptions.WriteIndented));
         return result;
     }

@@ -1,8 +1,10 @@
+using System.Net;
 using System.Security.AccessControl;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
+using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Domain.Entities;
 using WebAPI_Template_Starter.Features.AccountAPI;
 using WebAPI_Template_Starter.Features.AuthAPI.Dtos;
@@ -42,7 +44,7 @@ public class AuthService
         _cacheService   = cacheService;
     }
 
-    public async Task<Account> register(AccountDTO account)
+    public async Task<APIResponse<Object>> register(AccountDTO account)
     {
         Account acc  = new Account();
         acc.Id = Guid.NewGuid().ToString();
@@ -53,12 +55,18 @@ public class AuthService
         var affectedRows = await _accountRepo.addAsync(acc);
         if(affectedRows < 0) throw new ApplicationException("Failed to register account");
         
-        return acc;
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Login successfully",
+            acc
+        );
+        
+        return response;
     }
 
-    public Dictionary<String, Object> authenticate(AccountDTO req)
+    public async Task<APIResponse<Object>> authenticate(AccountDTO req)
     {
-        var user = _accountRepo.findAccountDetail(req.username).FirstOrDefault();
+        var user = (await _accountRepo.findAccountDetail(req.username)).FirstOrDefault();
 
         if (user == null) throw APIException.BadRequest("Can't find username");
 
@@ -66,10 +74,15 @@ public class AuthService
         
         if(!checkPassword) throw APIException.BadRequest("Wrong password");
         
-        String accessToken = _tokenProvider.generateAccessToken(user);
-        String refreshToken = _tokenProvider.generateRefreshToken(user);
+        String accessToken = await _tokenProvider.generateAccessToken(user);
+        String refreshToken = await _tokenProvider.generateRefreshToken(user);
         
-        return toToken(accessToken, refreshToken);
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Login successfully"
+        );
+
+        return response;
     }
     
     public async Task<SendResponse> sendEmail(EmailRequest req)
@@ -85,7 +98,7 @@ public class AuthService
         return sendProcess;
     }
     
-    public async Task<Object> generateOTP(String email)
+    public async Task<APIResponse<Object>> generateOTP(String email)
     {
         var otp = _otpProvider.generateNumericOtp(6);
         var salt = Guid.NewGuid().ToString("N");
@@ -114,7 +127,12 @@ public class AuthService
         );
         await sendEmail(emailReq);
         
-        return payload;
+        var response = new APIResponse<Object>(
+            HttpStatusCode.OK.value(),
+            "Send otp successfully"
+        );
+
+        return response;
     }
     
     public async Task verifyOtp(VerifyOtpRequest req)
