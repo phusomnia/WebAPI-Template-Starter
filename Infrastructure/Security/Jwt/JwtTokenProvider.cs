@@ -5,9 +5,10 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using WebAPI_Template_Starter.Application.AccountAPI;
 using WebAPI_Template_Starter.Domain.Entities;
-using WebAPI_Template_Starter.Features.AccountAPI;
-using WebAPI_Template_Starter.Infrastructure.Utils;
+using WebAPI_Template_Starter.Infrastructure.Configuration;
+using WebAPI_Template_Starter.Shared;
 
 namespace WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 

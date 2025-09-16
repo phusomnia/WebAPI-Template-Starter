@@ -1,9 +1,6 @@
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using WebAPI_Template_Starter.Domain.Core.BaseModel;
+using WebAPI_Template_Starter.Infrastructure.Configuration;
 using WebAPI_Template_Starter.Infrastructure.CustomException;
-using WebAPI_Template_Starter.Infrastructure.Utils;
 
 namespace WebAPI_Template_Starter.Infrastructure.Security.Jwt;
 

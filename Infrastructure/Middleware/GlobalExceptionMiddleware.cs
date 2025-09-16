@@ -1,4 +1,5 @@
 using System.Net;
+using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Infrastructure.CustomException;
 
 namespace WebAPI_Template_Starter.Infrastructure.Middleware;

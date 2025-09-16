@@ -8,3 +8,13 @@
    * Cloudinary
    * Mysql
    * Email (chi chay local)
+
+```
+/
+├── .github/ # 
+├── Domain / # chua thuc the, core cua nghiep vu
+├── Features / # cac chuc nang duoc goi thong API
+├── Infrastructure / # truy xuat database, cache 
+├── Program.cs # file bat dau chay tu day
+└── appsettings.json # file config
+```
