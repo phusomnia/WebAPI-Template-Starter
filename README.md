@@ -1,20 +1,54 @@
-* Yeu cau du an:
- - Database 
-   * Mysql 8.0 - port 3306 
- - Cache
-   * Redis - port 6379
- - Config (appsettings.json)
-   * Redis
-   * Cloudinary
-   * Mysql
-   * Email (chi chay local)
+## Guide to run this template
+
+## Requirements:
+- Mysql 8.0
+- Redis 
+- Cloudinary
+- Mail
+- RabbitMQ
+- Docker (dunno if u want to run this on docker)
+
+### Configuration (appsetting.json) ###
+```
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "REMOTE_MYSQL_URL": ""
+  },
+  "Jwt": {
+    "SecretKey": "",
+    "Issuer": "",
+    "Audience": "",
+    "atExpiryInMillisecond": "1*60*1000"
+  },
+  "Cloudinary": {
+    "url": ""
+  },
+  "Redis": {
+    "url": "localhost",
+    "port": "6379",
+    "password": "",
+    "user": ""
+  },
+  "Smtp": {
+    "host": "smtp.gmail.com",
+    "port": "587",
+    "user": "",
+    "pass": "",
+    "from": ""
+  },
+  "RabbitMq": {
+    "host": "localhost",
+    "user": "guest",
+    "pass": "guest"
+  }
+}
 
 ```
-/
-├── .github/ # 
-├── Domain / # chua thuc the, core cua nghiep vu
-├── Features / # cac chuc nang duoc goi thong API
-├── Infrastructure / # truy xuat database, cache 
-├── Program.cs # file bat dau chay tu day
-└── appsettings.json # file config
-```
+
