@@ -39,7 +39,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Domain\Entities\" />
+      <Folder Include="Domain\entities\" />
     </ItemGroup>
 
 </Project>
