@@ -38,8 +38,4 @@
       <Content Include=".github\workflows\dotnet.yml" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Domain\entities\" />
-    </ItemGroup>
-
 </Project>

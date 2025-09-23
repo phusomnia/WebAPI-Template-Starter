@@ -1,5 +1,5 @@
 using System.Net;
-using WebAPI_Template_Starter.Domain.Core.BaseModel;
+using WebAPI_Template_Starter.Domain.entities.@base;
 using WebAPI_Template_Starter.Domain.Enums;
 using WebAPI_Template_Starter.Features.CacheAPI;
 using WebAPI_Template_Starter.Features.CacheAPI.Dtos;

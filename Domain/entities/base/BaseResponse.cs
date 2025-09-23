@@ -1,4 +1,4 @@
-namespace WebAPI_Template_Starter.Domain.Core.BaseModel;
+namespace WebAPI_Template_Starter.Domain.entities.@base;
 
 public class BaseResponse
 {

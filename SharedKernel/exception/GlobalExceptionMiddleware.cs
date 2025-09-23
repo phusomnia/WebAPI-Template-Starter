@@ -1,4 +1,4 @@
-using WebAPI_Template_Starter.Domain.Core.BaseModel;
+using WebAPI_Template_Starter.Domain.entities.@base;
 
 namespace WebAPI_Template_Starter.SharedKernel.exception;
 

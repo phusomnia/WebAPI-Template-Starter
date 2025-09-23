@@ -2,7 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI_Template_Starter.Application.AccountAPI;
 using WebAPI_Template_Starter.Application.Features.AccountAPI;
-using WebAPI_Template_Starter.Domain.Core.BaseModel;
+using WebAPI_Template_Starter.Domain.entities.@base;
 using WebAPI_Template_Starter.Features.AuthAPI.Dtos;
 using WebAPI_Template_Starter.Pun.Api.Security.Attribute;
 using WebAPI_Template_Starter.SharedKernel.utils;

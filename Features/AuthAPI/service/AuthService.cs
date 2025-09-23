@@ -7,7 +7,6 @@ using FluentEmail.Core.Models;
 using WebAPI_Template_Starter.Application.AccountAPI;
 using WebAPI_Template_Starter.Application.Features.AccountAPI;
 using WebAPI_Template_Starter.Application.Features.CacheAPI;
-using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Domain.Entities;
 using WebAPI_Template_Starter.Domain.Enums;
 using WebAPI_Template_Starter.Features.AuthAPI.Dtos;

@@ -1,4 +1,5 @@
 using WebAPI_Template_Starter.Domain.Entities;
+using WebAPI_Template_Starter.Domain.entities.@base;
 using WebAPI_Template_Starter.SharedKernel.configuration;
 using WebAPI_Template_Starter.SharedKernel.exception;
 
@@ -13,7 +14,12 @@ public class MangaService
     {
         _repo = repo;
     }
-    
+
+    public async Task<ICollection<Dictionary<String, Object>>> getPageableManga(Pageable request)
+    {
+        return await _repo.paginateManga(request);
+    }
+
     public async Task<ICollection<Manga>> getManga()
     {
         return await _repo.getAllAsync();

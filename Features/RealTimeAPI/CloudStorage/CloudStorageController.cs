@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Net;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI_Template_Starter.Domain.Core.BaseModel;
+using WebAPI_Template_Starter.Domain.entities.@base;
 using WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Cloudinary;
 using WebAPI_Template_Starter.Features.RealTimeAPI.CloudStorage.Dtos;
 using WebAPI_Template_Starter.SharedKernel.utils;

@@ -2,8 +2,8 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Domain.Entities;
+using WebAPI_Template_Starter.Domain.entities.@base;
 using WebAPI_Template_Starter.SharedKernel.utils;
 
 namespace WebAPI_Template_Starter.Features.MangaAPI;
@@ -18,18 +18,24 @@ public class MangaController : ControllerBase
     {
         _service = service;
     }
-
+    
     [HttpGet]
-    [AllowAnonymous]
-    public async Task<IActionResult> getMangaAPI()
+    public async Task<IActionResult> getPaginatedMangaAPI(
+        [FromQuery] int page,
+        [FromQuery] int limit
+    )
     {
-        var result = await _service.getManga();
+        var pageableRequest = new Pageable(page, limit);
+        
+        var result = await _service.getPageableManga(pageableRequest);
+        
+        pageableRequest.total = result.Count;
         
         var response = new APIResponse<Object>(
             HttpStatusCode.OK.value(),
             "Get manga",
             result
-        );
+        ).setMetadata(pageableRequest);
         
         return Ok(response);
     }
