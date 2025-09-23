@@ -3,10 +3,9 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 using WebAPI_Template_Starter.Features.RealTimeAPI.Chat;
-using WebAPI_Template_Starter.Infrastructure.Config;
-using WebAPI_Template_Starter.Infrastructure.Configuration;
-using WebAPI_Template_Starter.Infrastructure.Middleware;
 using WebAPI_Template_Starter.Infrastructure.Security;
+using WebAPI_Template_Starter.SharedKernel.configuration;
+using WebAPI_Template_Starter.SharedKernel.exception;
 
 var builder = WebApplication.CreateBuilder(args);
 
