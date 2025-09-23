@@ -1,16 +1,15 @@
 using WebAPI_Template_Starter.Domain.Entities;
-using WebAPI_Template_Starter.Features.MangaAPI;
 using WebAPI_Template_Starter.SharedKernel.configuration;
 using WebAPI_Template_Starter.SharedKernel.exception;
 
-namespace WebAPI_Template_Starter.Application.Features.MangaAPI;
+namespace WebAPI_Template_Starter.Features.MangaAPI;
 
 [Service]
 public class MangaService
 {
-    private readonly MangaRepository _repo;
+    private readonly IMangaRepository _repo;
 
-    public MangaService(MangaRepository repo)
+    public MangaService(IMangaRepository repo)
     {
         _repo = repo;
     }

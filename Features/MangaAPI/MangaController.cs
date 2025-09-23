@@ -2,7 +2,6 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI_Template_Starter.Application.Features.MangaAPI;
 using WebAPI_Template_Starter.Domain.Core.BaseModel;
 using WebAPI_Template_Starter.Domain.Entities;
 using WebAPI_Template_Starter.SharedKernel.utils;

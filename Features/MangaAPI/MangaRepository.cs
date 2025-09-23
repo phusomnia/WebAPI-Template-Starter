@@ -3,10 +3,10 @@ using WebAPI_Template_Starter.Infrastructure.Persistence;
 using WebAPI_Template_Starter.SharedKernel.configuration;
 using WebAPI_Template_Starter.SharedKernel.persistence.data;
 
-namespace WebAPI_Template_Starter.Application.Features.MangaAPI;
+namespace WebAPI_Template_Starter.Features.MangaAPI;
 
 [Repository]
-public class MangaRepository : CrudRepository<Manga, String>
+public class MangaRepository : CrudRepository<Manga, string>, IMangaRepository
 {
     public MangaRepository(AppDbContext context) : base(context)
     {
